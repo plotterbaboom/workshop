@@ -12,8 +12,8 @@ Thanks to Node.js and the Johnny-Five library, you can easily interface with you
 
 ####Create a folder for your sensor project and move into it
 ```
-$ mkdir tmp36
-$ cd tmp36
+$ mkdir your-project-name
+$ cd your-project-name
 ```
 ####Use the node package manager (npm) to install the required libraries.
 ```
