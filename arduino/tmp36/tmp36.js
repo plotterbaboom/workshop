@@ -14,7 +14,7 @@ board.on("ready", function() {
     console.log(res);
   });
 
-  sensor.on("change", function(err, reading) {
+  sensor.on("data", function(err, reading) {
     var voltage = reading * .004882814;
     // For Fahrenheit
     var temperature = (((voltage - .5) * 100)*1.8) + 32;
