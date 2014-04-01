@@ -5,24 +5,48 @@ var sensor;
 
 board = new five.Board();
 
-var data = [{x:[], y:[], stream:{token:'your_streamtoken', maxpoints:200}}];
-var layout = {fileopt : "extend", filename : "nodenodenode"};
+var data = [{x:[], y:[], stream:{token:'streamtoken', maxpoints:200}}];
+var layout = {fileopt : "extend", filename : "tmp36 nodey arduino!"};
 
 board.on("ready", function() {
-  sensor = new five.Sensor({  pin: 0, freq: 250 });
-  var stream = plotly.stream('your_streamtoken', function (res) {
-    console.log(res);
+
+  // create a new tmp36 sensor object
+  tmp36 = new five.Sensor({
+    pin: "A1",
+    freq: 1000,
+    thresh: 0.5
   });
 
-  sensor.on("data", function(err, reading) {
-    var voltage = reading * .004882814;
-    // For Fahrenheit
-    var temperature = (((voltage - .5) * 100)*1.8) + 32;
-    // For Celsius
-    // var temperature = ((voltage - .5) * 100);
-    console.log( temperature );
-		var streamdata = JSON.stringify({ x : Date(), y : temperature });
-		stream1.write(streamdata+'\n');
+  plotly.plot(data,layout,function (err, res) {
+    console.log(res);
+    var stream = plotly.stream('streamtoken', function (res) {
+      console.log(res);
+    });
+    // 'freq' sets data event pulses. this gets called each time.
+    tmp36.on("data", function() {
+      var date = getDateString();
+      data = {
+        x : date,
+        y : getTemp(this.value)
+      }
+      console.log(data);
+      // write the payload to the plotly stream
+      stream.write(JSON.stringify(data)+'\n');
+    });
   });
-	
 });
+
+// helper function to convert sensor value to temp
+function getTemp (value) {
+  var voltage = value * 0.004882814;
+  var celsius = (voltage - 0.5) * 100;
+  var fahrenheit = celsius * (9 / 5) + 32;
+  return celsius;
+}
+
+// helper function to return date string!
+function getDateString () {
+  var time = new Date();
+  var datestr = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  return datestr;
+}
