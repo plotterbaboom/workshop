@@ -21,27 +21,27 @@ int current_quality =-1;
 int sensorpin = A0; //analog pin 0
 
 void startEthernet(){
-		Serial.println("... Initializing ethernet");
-		if(Ethernet.begin(mac) == 0){
-				Serial.println("... Failed to configure Ethernet using DHCP");
-				// no point in carrying on, so do nothing forevermore:
-				// try to congifure using IP address instead of DHCP:
-				Ethernet.begin(mac, my_ip);
-		}
-		Serial.println("... Done initializing ethernet");
-		delay(1000);
+    Serial.println("... Initializing ethernet");
+    if(Ethernet.begin(mac) == 0){
+        Serial.println("... Failed to configure Ethernet using DHCP");
+        // no point in carrying on, so do nothing forevermore:
+        // try to congifure using IP address instead of DHCP:
+        Ethernet.begin(mac, my_ip);
+    }
+    Serial.println("... Done initializing ethernet");
+    delay(1000);
 }
 
 void setup() {
-	// Open serial communications and wait for port to open:
-	Serial.begin(9600);
-	while (!Serial) {
-		; // wait for serial port to connect. Needed for Leonardo only
-	}
-	startEthernet();
-	airqualitysensor.init(14);
-	graph.init();
-	graph.openStream();
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+  startEthernet();
+  airqualitysensor.init(14);
+  graph.init();
+  graph.openStream();
 }
 
 unsigned long x;
@@ -49,27 +49,27 @@ int y;
 
 void loop() {
 current_quality=airqualitysensor.slope();
-	if (current_quality >= 0) { // if a valid data returned.
-		if (current_quality==0)
-		Serial.println("High pollution! Force signal active");
-		else if (current_quality==1)
-		Serial.println("High pollution!");
-		else if (current_quality==2)
-		Serial.println("Low pollution!");
-		else if (current_quality ==3)
-		Serial.println("Fresh air");
-	}
-		graph.plot(millis(), current_quality, tokens[0]);
+  if (current_quality >= 0) { // if a valid data returned.
+    if (current_quality==0)
+    Serial.println("High pollution! Force signal active");
+    else if (current_quality==1)
+    Serial.println("High pollution!");
+    else if (current_quality==2)
+    Serial.println("Low pollution!");
+    else if (current_quality ==3)
+    Serial.println("Fresh air");
+  }
+    graph.plot(millis(), current_quality, tokens[0]);
 }
 
 ISR(TIMER2_OVF_vect) {
-	if(airqualitysensor.counter==122) {//set 2 seconds as a detected duty
-	airqualitysensor.last_vol=airqualitysensor.first_vol;
-		airqualitysensor.first_vol=analogRead(sensorpin);
-		airqualitysensor.counter=0;
-		airqualitysensor.timer_index=1;
-		PORTB=PORTB^0x20;
-	} else {
-		airqualitysensor.counter++;
-	}
+  if(airqualitysensor.counter==122) {//set 2 seconds as a detected duty
+  airqualitysensor.last_vol=airqualitysensor.first_vol;
+    airqualitysensor.first_vol=analogRead(sensorpin);
+    airqualitysensor.counter=0;
+    airqualitysensor.timer_index=1;
+    PORTB=PORTB^0x20;
+  } else {
+    airqualitysensor.counter++;
+  }
 }
