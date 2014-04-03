@@ -29,17 +29,13 @@ void startEthernet(){
     delay(1000);
 }
 
-
 void setup() {
-
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-
   startEthernet();
-
   graph.init();
   graph.openStream();
 }
@@ -58,5 +54,5 @@ void loop() {
   float temperatureC = (voltage - 0.5) * 100;
   // now convert to Fahrenheit
   float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
-  graph.plot(millis(), sensor_reading, tokens[0]);
+  graph.plot(millis(), temperatureC, tokens[0]);
 }

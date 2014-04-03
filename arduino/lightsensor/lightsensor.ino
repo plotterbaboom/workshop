@@ -4,7 +4,7 @@
 
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
-#define nTraces 6
+#define nTraces 1
 // View your tokens here: https://plot.ly/settings
 // Supply as many tokens as data traces
 // e.g. if you want to ploty A0 and A1 vs time, supply two tokens
@@ -37,9 +37,7 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-
   startEthernet();
-
   graph.init();
   graph.openStream();
 }

@@ -1,9 +1,6 @@
 var plotly = require('plotly')('username', 'api_key');
 var five = require("johnny-five");
-var board;
-var sensor;
-
-board = new five.Board();
+var board = new five.Board();
 
 var data = [{x:[], y:[], stream:{token:'streamtoken', maxpoints:200}}];
 var layout = {fileopt : "extend", filename : "tmp36 nodey arduino!"};
@@ -11,18 +8,20 @@ var layout = {fileopt : "extend", filename : "tmp36 nodey arduino!"};
 board.on("ready", function() {
 
   // create a new tmp36 sensor object
-  tmp36 = new five.Sensor({
-    pin: "A1",
-    freq: 1000,
+  var tmp36 = new five.Sensor({
+    pin: "A0",
+    freq: 50, // get reading every 50ms
     thresh: 0.5
   });
-
+  // initialize the plotly graph
   plotly.plot(data,layout,function (err, res) {
     console.log(res);
+    //once it's initialized, create a plotly stream
+    //to pipe your data!
     var stream = plotly.stream('streamtoken', function (res) {
       console.log(res);
     });
-    // 'freq' sets data event pulses. this gets called each time.
+    // this gets called each time there is a new sensor reading
     tmp36.on("data", function() {
       var date = getDateString();
       data = {
@@ -30,7 +29,7 @@ board.on("ready", function() {
         y : getTemp(this.value)
       }
       console.log(data);
-      // write the payload to the plotly stream
+      // write the data to the plotly stream
       stream.write(JSON.stringify(data)+'\n');
     });
   });
@@ -44,9 +43,11 @@ function getTemp (value) {
   return celsius;
 }
 
-// helper function to return date string!
+// little helper function to get a nicely formatted date string
 function getDateString () {
   var time = new Date();
+  // 14400000 is (GMT-4 Montreal)
+  // for your timezone just multiply +/-GMT by 3600000
   var datestr = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
   return datestr;
 }
