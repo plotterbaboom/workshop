@@ -1,12 +1,53 @@
-int LDR_Pin = A0; //analog pin 0
+#include <SPI.h>
+#include <Ethernet.h>
+#include "plotly_streaming_ethernet.h"
 
-void setup(){
-  Serial.begin(9600);
+// Sign up to plotly here: https://plot.ly
+// View your API key and streamtokens here: https://plot.ly/settings
+#define nTraces 6
+// View your tokens here: https://plot.ly/settings
+// Supply as many tokens as data traces
+// e.g. if you want to ploty A0 and A1 vs time, supply two tokens
+char *tokens[nTraces] = {"8xdfnkq1nb"};
+// arguments: username, api key, streaming token, filename
+plotly graph("streaming-demos", "3yyglqsi85", tokens, "filename", nTraces);
+
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+byte my_ip[] = { 199, 168, 222, 18 }; // google will tell you: "public ip address"
+
+int photoresistor_pin = A0; //analog pin 0
+
+void startEthernet(){
+    Serial.println("... Initializing ethernet");
+    if(Ethernet.begin(mac) == 0){
+        Serial.println("... Failed to configure Ethernet using DHCP");
+        // no point in carrying on, so do nothing forevermore:
+        // try to congifure using IP address instead of DHCP:
+        Ethernet.begin(mac, my_ip);
+    }
+    Serial.println("... Done initializing ethernet");
+    delay(1000);
 }
 
-void loop(){
-  int LDRReading = analogRead(LDR_Pin);
 
-  Serial.println(LDRReading);
-  delay(250); //just here to slow down the output for easier reading
+void setup() {
+
+  // Open serial communications and wait for port to open:
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for Leonardo only
+  }
+
+  startEthernet();
+
+  graph.init();
+  graph.openStream();
+}
+
+unsigned long x;
+int y;
+
+void loop() {
+  int sensor_reading = analogRead(photoresistor_pin);
+  graph.plot(millis(), sensor_reading, tokens[0]);
 }
