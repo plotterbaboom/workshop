@@ -1,8 +1,7 @@
 var five = require("johnny-five");
 var board = new five.Board();
-var Stream = require('stream-readable');
+var Stream = require('stream');
 var flow_stream = new Stream();
-
 var plotly = require('plotly')('username','api_key');
 
 var data = [{
@@ -45,23 +44,30 @@ board.on("ready", function() {
 
   // Set how often to Emit data to Plotly
   setInterval(function() {
-    var time = new Date();
-    var date = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
     var litres = pulses;
     litres /= 7.5;
     litres /= 60;
-    var data = {x:date, y:litres};
+    var data = {x:getDateString(), y:litres};
     flow_stream.emit('data', JSON.stringify(data)+'\n');
   }, 500);
 
   // Set up Graph + Initialize stream + Pipe to stream
   plotly.plot(data,layout,function (err, msg) {
+    if (err) console.log(err);
     console.log(msg);
-    var stream = plotly.stream('streamtoken', function (res) {
+    var stream = plotly.stream('streamtoken', function (err, res) {
+      if (err) console.log(err);
       console.log(res);
     });
     flow_stream.pipe(stream);
   });
-
-
 });
+
+// little helper function to get a nicely formatted date string
+function getDateString () {
+  var time = new Date();
+  // 14400000 is (GMT-4 Montreal)
+  // for your timezone just multiply +/-GMT by 3600000
+  var datestr = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  return datestr;
+}

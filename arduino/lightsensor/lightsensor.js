@@ -15,26 +15,27 @@ board.on("ready", function() {
   });
   // initialize that plotly graph
   plotly.plot(data,layout,function (err, res) {
+    if (err) console.log(err);
     console.log(res);
     //once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('streamtoken', function (res) {
+    var stream = plotly.stream('streamtoken', function (err, res) {
+      if (err) console.log(err);
       console.log(res);
     });
-    // this gets called everytime photoresistor returns its value
+    // this gets called every time photoresistor returns its value
     photoresistor.scale([ 0, 200 ]).on("data", function() {
-      console.log(this.value);
-      var date = getDateString();
       data = {
-        x : date,
+        x : getDateString(),
         y : 0,
         marker : {
           size : this.value,
           color : "orange"
         },
         mode: "markers"
-      }
+      };
       // write the data to the plotly stream
+      console.log(data);
       stream.write(JSON.stringify(data)+'\n');
     });
   });

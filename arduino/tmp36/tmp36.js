@@ -15,19 +15,20 @@ board.on("ready", function() {
   });
   // initialize the plotly graph
   plotly.plot(data,layout,function (err, res) {
+    if (err) console.log(err);
     console.log(res);
     //once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('streamtoken', function (res) {
+    var stream = plotly.stream('streamtoken', function (err, res) {
+      if (err) console.log(err);
       console.log(res);
     });
     // this gets called each time there is a new sensor reading
     tmp36.on("data", function() {
-      var date = getDateString();
-      data = {
-        x : date,
-        y : getTemp(this.value)
-      }
+      var data = {
+        x : getDateString(),
+        y : convertTemperature(this.value)
+      };
       console.log(data);
       // write the data to the plotly stream
       stream.write(JSON.stringify(data)+'\n');
@@ -36,7 +37,7 @@ board.on("ready", function() {
 });
 
 // helper function to convert sensor value to temp
-function getTemp (value) {
+function convertTemperature (value) {
   var voltage = value * 0.004882814;
   var celsius = (voltage - 0.5) * 100;
   var fahrenheit = celsius * (9 / 5) + 32;

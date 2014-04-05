@@ -1,6 +1,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "plotly_streaming_ethernet.h"
+
 #define flow_sensor_pin 2
 // count how many pulses!
 volatile uint16_t pulses = 0;
@@ -89,16 +90,9 @@ void loop() {
 
   Serial.print("Freq: "); Serial.println(flowrate);
   Serial.print("Pulses: "); Serial.println(pulses, DEC);
-
-  // if a plastic sensor use the following calculation
-  // Sensor Frequency (Hz) = 7.5 * Q (Liters/min)
-  // Liters = Q * time elapsed (seconds) / 60 (seconds/minute)
-  // Liters = (Frequency (Pulses/second) / 7.5) * time elapsed (seconds) / 60
-  // Liters = Pulses / (7.5 * 60)
   float liters = pulses;
   liters /= 7.5;
   liters /= 60.0;
-
 /*
   // if a brass sensor use the following calculation
   float liters = pulses;
@@ -107,10 +101,6 @@ void loop() {
   liters /= 60.0;
 */
   Serial.print(liters); Serial.println(" Liters");
-  lcd.setCursor(0, 1);
-  lcd.print(liters); lcd.print(" Liters        ");
-
-
   graph.plot(millis(), liters, tokens[0]);
   delay(100);
 }
