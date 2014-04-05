@@ -18,26 +18,13 @@ var layout = { fileopt : "overwrite", filename : "Water Flow" };
 var pulses = 0;
 var lastFlowRateTimer = 0;
 
-function flowSignal (value) {
-    if (value === 0) {
-      lastFlowRateTimer ++;
-      return;
-    }
-    if (value === 1) {
-      pulses ++;
-    }
-    lastFlowPinState = value;
-    flowrate = 1000.0;
-    flowrate /= lastFlowRateTimer;
-    lastFlowRateTimer = 0;
-}
-
 board.on("ready", function() {
   this.pinMode(2, five.Pin.INPUT);
   lastFlowPinState = 0;
 
   // Check Digital Pin to see if theres a change
   var x = this.digitalRead(2, function(value) {
+    // send the pin status to flowSignal helper
     flowSignal(value);
     console.log(value);
   });
@@ -62,6 +49,21 @@ board.on("ready", function() {
     flow_stream.pipe(stream);
   });
 });
+
+// helper function to keep track of pulses
+function flowSignal (value) {
+    if (value === 0) {
+      lastFlowRateTimer ++;
+      return;
+    }
+    if (value === 1) {
+      pulses ++;
+    }
+    lastFlowPinState = value;
+    flowrate = 1000.0;
+    flowrate /= lastFlowRateTimer;
+    lastFlowRateTimer = 0;
+}
 
 // little helper function to get a nicely formatted date string
 function getDateString () {

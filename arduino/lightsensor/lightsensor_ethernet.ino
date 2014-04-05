@@ -1,7 +1,8 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include "plotly_streaming_ethernet.h"
-#include "DHT.h"
+
+int photoresistor_pin = A0; //analog pin 0
 
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
@@ -9,17 +10,12 @@
 // View your tokens here: https://plot.ly/settings
 // Supply as many tokens as data traces
 // e.g. if you want to ploty A0 and A1 vs time, supply two tokens
-char *tokens[nTraces] = {"streamtoken1", "streamtoken2"};
+char *tokens[nTraces] = {"token_1", "token_2"};
 // arguments: username, api key, streaming token, filename
-plotly graph("streaming-demos", "3yyglqsi85", tokens, "filename", nTraces);
+plotly graph("plotly_username", "plotly_api_key", tokens, "your_filename", nTraces);
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 byte my_ip[] = { 199, 168, 222, 18 }; // google will tell you: "public ip address"
-
-// DHT Sensor Setup
-#define DHTPIN 2 // We have connected the DHT to Digital Pin 2
-#define DHTTYPE DHT22 // This is the type of DHT Sensor (Change it to DHT11 if you're using that model)
-DHT dht(DHTPIN, DHTTYPE); // Initialize DHT object
 
 void startEthernet(){
     Serial.println("... Initializing ethernet");
@@ -33,20 +29,27 @@ void startEthernet(){
     delay(1000);
 }
 
+
 void setup() {
+
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
+
   startEthernet();
-  graph.init();
+
+  bool success;
+  success = graph.init();
+  if(!success){while(true){}}
   graph.openStream();
-  dht.begin(); // initialize dht sensor reading
 }
 
+unsigned long x;
+int y;
+
 void loop() {
-      float h = dht.readHumidity();
-      float t = dht.readTemperature() - 5;
-      graph.plot(millis(), t, tokens[0]);
-  }
+  int sensor_reading = analogRead(photoresistor_pin);
+  graph.plot(millis(), sensor_reading, tokens[0]);
+}

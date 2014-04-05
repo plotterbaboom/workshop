@@ -1,42 +1,49 @@
-#include <SPI.h>
-#include <Ethernet.h>
-#include "plotly_streaming_ethernet.h"
+#include <WiFi.h>
+#include "plotly_streaming_wifi.h"
 
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
-#define nTraces 6
+#define nTraces 1
+int tmp36sensor_pin = A0; //analog pin 0
 // View your tokens here: https://plot.ly/settings
 // Supply as many tokens as data traces
 // e.g. if you want to ploty A0 and A1 vs time, supply two tokens
-char *tokens[nTraces] = {"8xdfnkq1nb"};
+char *tokens[nTraces] = {"token_1"};
 // arguments: username, api key, streaming token, filename
-plotly graph("streaming-demos", "3yyglqsi85", tokens, "filename", nTraces);
+plotly graph("plotly_username", "plotly_api_key", tokens, "your_filename", nTraces);
 
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-byte my_ip[] = { 199, 168, 222, 18 }; // google will tell you: "public ip address"
+int status = WL_IDLE_STATUS;     // the Wifi radio's status
+char ssid[] = "wifi_network_name"; //  your network SSID (name)
+char pass[] = "wifi_network_password"; // // your network password
 
-int tmp36sensor_pin = A0; //analog pin 0
-
-void startEthernet(){
-    Serial.println("... Initializing ethernet");
-    if(Ethernet.begin(mac) == 0){
-        Serial.println("... Failed to configure Ethernet using DHCP");
-        // no point in carrying on, so do nothing forevermore:
-        // try to congifure using IP address instead of DHCP:
-        Ethernet.begin(mac, my_ip);
+void wifi_connect(){
+    // attempt to connect using WPA2 encryption:
+    Serial.println("... Attempting to connect to WPA network...");
+    status = WiFi.begin(ssid, pass);
+    // if you're not connected, stop here:
+    if ( status != WL_CONNECTED) {
+      Serial.println("... Couldn't get a WiFi connection, trying again");
+      wifi_connect();
     }
-    Serial.println("... Done initializing ethernet");
-    delay(1000);
+    // if you are connected, print out info about the connection:
+    else {
+      Serial.println("... Connected to network");
+    }
 }
 
 void setup() {
+
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-  startEthernet();
-  graph.init();
+
+  wifi_connect();
+
+  bool success;
+  success = graph.init();
+  if(!success){while(true){}}
   graph.openStream();
 }
 

@@ -1,8 +1,9 @@
+#include <GSM.h>
+#include "plotly_streaming_gsm.h"
+
 #include "AirQuality.h"
 #include "Arduino.h"
-#include <SPI.h>
-#include <Ethernet.h>
-#include "plotly_streaming_ethernet.h"
+
 
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
@@ -20,16 +21,8 @@ AirQuality airqualitysensor;
 int current_quality =-1;
 int sensorpin = A0; //analog pin 0
 
-void startEthernet(){
-    Serial.println("... Initializing ethernet");
-    if(Ethernet.begin(mac) == 0){
-        Serial.println("... Failed to configure Ethernet using DHCP");
-        // no point in carrying on, so do nothing forevermore:
-        // try to congifure using IP address instead of DHCP:
-        Ethernet.begin(mac, my_ip);
-    }
-    Serial.println("... Done initializing ethernet");
-    delay(1000);
+void gsm_connect(){
+  // ...
 }
 
 void setup() {
@@ -38,10 +31,13 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
-  startEthernet();
-  airqualitysensor.init(14);
-  graph.init();
+  gsm_connect();
+
+  bool success;
+  success = graph.init();
+  if(!success){while(true){}}
   graph.openStream();
+  airqualitysensor.init(14);
 }
 
 unsigned long x;

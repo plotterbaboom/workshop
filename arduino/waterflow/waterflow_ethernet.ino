@@ -2,6 +2,16 @@
 #include <Ethernet.h>
 #include "plotly_streaming_ethernet.h"
 
+// Sign up to plotly here: https://plot.ly
+// View your API key and streamtokens here: https://plot.ly/settings
+#define nTraces 1
+// View your tokens here: https://plot.ly/settings
+// Supply as many tokens as data traces
+// e.g. if you want to ploty A0 and A1 vs time, supply two tokens
+char *tokens[nTraces] = {"token_1"};
+// arguments: username, api key, streaming token, filename
+plotly graph("plotly_username", "plotly_api_key", tokens, "your_filename", nTraces);
+
 #define flow_sensor_pin 2
 // count how many pulses!
 volatile uint16_t pulses = 0;
@@ -42,18 +52,9 @@ void useInterrupt(boolean v) {
   }
 }
 
-// Sign up for plotly here: https://plot.ly
-// View your API key and streamtokens here: https://plot.ly/settings
-#define nTraces 1
-// View your tokens here: https://plot.ly/settings
-// Supply as many tokens as data traces
-// e.g. if you want to ploty A0 and A1 vs time, supply two tokens
-char *tokens[nTraces] = {"stream_token"};
-// arguments: username, api key, streaming token, filename, # of traces
-plotly graph("username", "api_key", tokens, "filename", nTraces);
-
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 byte my_ip[] = { 199, 168, 222, 18 }; // google will tell you: "public ip address"
+
 void startEthernet(){
     Serial.println("... Initializing ethernet");
     if(Ethernet.begin(mac) == 0){
@@ -74,12 +75,17 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for Leonardo only
   }
+
+  startEthernet();
+
+
+  bool success;
+  success = graph.init();
   pinMode(flow_sensor_pin, INPUT);
   digitalWrite(flow_sensor_pin, HIGH);
   lastflowpinstate = digitalRead(flow_sensor_pin);
   useInterrupt(true);
-  startEthernet();
-  graph.init();
+  if(!success){while(true){}}
   graph.openStream();
 }
 
@@ -87,7 +93,6 @@ unsigned long x;
 int y;
 
 void loop() {
-
   Serial.print("Freq: "); Serial.println(flowrate);
   Serial.print("Pulses: "); Serial.println(pulses, DEC);
   float liters = pulses;
