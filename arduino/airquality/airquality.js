@@ -3,14 +3,20 @@ var five = require("johnny-five");
 var board = new five.Board();
 
 // plotly init data
-var data = [{x:[], y:[], mode: "markers", stream:{token:'25tm9197rz', maxpoints:20}}];
-var layout = {fileopt : "overwrite", filename : "photoresistor nodey arduino!"};
+var data = [
+  {x:[], y:[], stream:{token:'25tm9197rz', maxpoints:20}},
+  {x:[], y:[], stream:{token:'unbi52ww8a', maxpoints:20}}];
+var layout = {fileopt : "overwrite", filename : "airquality nodey arduino!"};
 
 // lets do this
 board.on("ready", function() {
   // create a new `photoresistor` sensor object
-  var photoresistor = new five.Sensor({
+  var airquality_sensor = new five.Sensor({
     pin: "A0",
+    freq: 1000 // send reading every 1000ms
+  });
+  var gas_sensor = new five.Sensor({
+    pin: "A1",
     freq: 1000 // send reading every 1000ms
   });
   // initialize that plotly graph
@@ -19,21 +25,31 @@ board.on("ready", function() {
     console.log(res);
     //once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('25tm9197rz', function (err, res) {
+    var airquality_stream = plotly.stream('25tm9197rz', function (err, res) {
+      if (err) console.log(err);
+      console.log(res);
+    });
+    var gassensor_stream = plotly.stream('unbi52ww8a', function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
     // this gets called every time photoresistor returns its value
-    photoresistor.scale([ 0, 200 ]).on("data", function() {
+    airquality_sensor.on("data", function() {
       data = {
         x : getDateString(),
-        y : 0,
-        marker : {
-          size : this.value
-        }
+        y : this.value
       };
       // write the data to the plotly stream
-      stream.write(JSON.stringify(data)+'\n');
+      airquality_stream.write(JSON.stringify(data)+'\n');
+    });
+    gas_sensor.on("data", function() {
+      data = {
+        x : getDateString(),
+        y : this.value
+      };
+      console.log(this.value);
+      // write the data to the plotly stream
+      gassensor_stream.write(JSON.stringify(data)+'\n');
     });
   });
 });
