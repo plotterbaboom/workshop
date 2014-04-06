@@ -9,9 +9,9 @@
 // View your tokens here: https://plot.ly/settings
 // Supply as many tokens as data traces
 // e.g. if you want to ploty A0 and A1 vs time, supply two tokens
-char *tokens[nTraces] = {"streamtoken1", "streamtoken2"};
+char *tokens[nTraces] = {"25tm9197rz", "unbi52ww8a"};
 // arguments: username, api key, streaming token, filename
-plotly graph("streaming-demos", "3yyglqsi85", tokens, "filename", nTraces);
+plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
 
 // DHT Sensor Setup
 #define DHTPIN 2 // We have connected the DHT to Digital Pin 2
@@ -35,7 +35,7 @@ void startEthernet(){
 
 
 void setup() {
-
+  graph.maxpoints = 100;
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {

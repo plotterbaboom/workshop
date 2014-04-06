@@ -10,7 +10,7 @@ board.on("ready", function() {
   // create a new tmp36 sensor object
   var tmp36 = new five.Sensor({
     pin: "A0",
-    freq: 50, // get reading every 50ms
+    freq: 1000, // get reading every 1000ms
     thresh: 0.5
   });
   // initialize the plotly graph

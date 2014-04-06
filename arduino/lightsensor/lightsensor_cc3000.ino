@@ -1,25 +1,23 @@
 #include <Adafruit_CC3000.h>
 #include <ccspi.h>
 #include <SPI.h>
-#include <string.h>
-#include "utility/debug.h"
 #include <plotly_streaming_cc3000.h>
 
 #define WLAN_SSID       "wifi_network_name"
 #define WLAN_PASS       "wifi_network_password"
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
-int photoresistor_pin = A0; //analog pin 0
-
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
-#define nTraces 2
+#define nTraces 1
 // View your tokens here: https://plot.ly/settings
 // Supply as many tokens as data traces
 // e.g. if you want to ploty A0 and A1 vs time, supply two tokens
-char *tokens[nTraces] = {"token_1", "token_2"};
+char *tokens[nTraces] = {"25tm9197rz"};
 // arguments: username, api key, streaming token, filename
-plotly graph("plotly_username", "plotly_api_key", tokens, "your_filename", nTraces);
+plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
+
+#define photoresistor_pin 0; //analog pin 0
 
 void wifi_connect(){
   /* Initialise the module */
@@ -50,7 +48,7 @@ void wifi_connect(){
 
 
 void setup() {
-
+  graph.maxpoints = 100;
   // Open serial communications and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -71,4 +69,5 @@ int y;
 void loop() {
   int sensor_reading = analogRead(photoresistor_pin);
   graph.plot(millis(), sensor_reading, tokens[0]);
+  delay(500);
 }

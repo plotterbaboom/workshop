@@ -36,7 +36,7 @@ board.on("ready", function() {
     litres /= 60;
     var data = {x:getDateString(), y:litres};
     flow_stream.emit('data', JSON.stringify(data)+'\n');
-  }, 500);
+  }, 1000);
 
   // Set up Graph + Initialize stream + Pipe to stream
   plotly.plot(data,layout,function (err, msg) {
