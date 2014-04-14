@@ -2,13 +2,13 @@ var five = require("johnny-five");
 var board = new five.Board();
 var Stream = require('stream');
 var flow_stream = new Stream();
-var plotly = require('plotly')('username','api_key');
+var plotly = require('plotly')('workshop','v6w5xlbx9j');
 
 var data = [{
   x : [],
   y : [],
   stream : {
-    token : 'streamtoken',
+    token : '25tm9197rz',
     maxpoints : 5000
   }
 }];
@@ -42,7 +42,7 @@ board.on("ready", function() {
   plotly.plot(data,layout,function (err, msg) {
     if (err) console.log(err);
     console.log(msg);
-    var stream = plotly.stream('streamtoken', function (err, res) {
+    var stream = plotly.stream('25tm9197rz', function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
