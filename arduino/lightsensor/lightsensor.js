@@ -43,6 +43,6 @@ function getDateString () {
   var time = new Date();
   // 14400000 is (GMT-4 Montreal)
   // for your timezone just multiply +/-GMT by 3600000
-  var datestr = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+  var datestr = new Date(time - 14400000).toISOString().replace(/T/, ' ').replace(/Z/, '');
   return datestr;
 }

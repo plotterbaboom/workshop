@@ -37,13 +37,13 @@ void setup() {
 
 unsigned long x;
 int y;
-float millivolts;
+float volume;
 
 void loop() {
     int airquality_value = analogRead(airquality_sensor_pin);
     int gas_value = analogRead(gas_sensor_pin);
     volume = (float)gas_value/1024*5.0*1000;
     graph.plot(millis(), airquality_value, tokens[0]);
-    graph.plot(millis(), millivolts, tokens[1]);
+    graph.plot(millis(), volume, tokens[1]);
     delay(50);
 }
