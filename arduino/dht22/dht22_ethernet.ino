@@ -51,12 +51,11 @@ void setup() {
   dht.begin();
 }
 
-unsigned long x;
-int y;
+float h, t;
 
 void loop() {
-      float h = dht.readHumidity();
-      float t = dht.readTemperature();
+      h = dht.readHumidity();
+      t = dht.readTemperature();
       graph.plot(millis(), t, tokens[0]);
       graph.plot(millis(), h, tokens[1]);
 }
