@@ -8,13 +8,14 @@ var layout = {fileopt : "extend", filename : "uv sensing nodey arduino!"};
 
 board.on("ready", function() {
 
-  // create a new tmp36 sensor object
+  // create a new UV sensor object
   var uvOut = new five.Sensor({
     pin: "A0",
     freq: 1000, // get reading every 1000ms
     thresh: 0.5
   });
 
+  // create a 3V reference Pin object
   var ref_3V3 = new five.Sensor({
     pin: "A1",
     freq: 1000, // get reading every 1000ms
@@ -51,7 +52,7 @@ board.on("ready", function() {
       stream.write(JSON.stringify(data)+'\n');
     });
 
-    uvOut.on("data", function() {
+    refLevel.on("data", function() {
       refLevel = this.value;
       var outputVoltage = 3.3 / refLevel * uvLevel;
 

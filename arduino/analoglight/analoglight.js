@@ -4,15 +4,14 @@ var board = new five.Board();
 
 var data = [{x:[], y:[], stream:{token:'25tm9197rz', maxpoints:200}},
             {x:[], y:[], stream:{token:'unbi52ww8a', maxpoints:200}}];
-var layout = {fileopt : "extend", filename : "uv sensing nodey arduino!"};
+var layout = {fileopt : "overwrite", filename : "uv sensing nodey arduino!"};
 
 board.on("ready", function() {
 
   // create a new Analog Sensor sensor object
   var analog_light_sensor = new five.Sensor({
     pin: "A0",
-    freq: 1000, // get reading every 1000ms
-    thresh: 0.5
+    freq: 1000 // get reading every 1000ms
   });
 
   // initialize the plotly graph
@@ -33,7 +32,8 @@ board.on("ready", function() {
 
     // this gets called each time there is a new sensor reading
     analog_light_sensor.on("data", function() {
-      rawValue = this.value;
+      var rawValue = this.value;
+      console.log('raw : '+rawValue);
 
       var data = {
         x : getDateString(),
@@ -41,7 +41,7 @@ board.on("ready", function() {
       };
       console.log(data);
       // write the data to the plotly stream
-      RawToLux(rawValue);
+      RawToLux(rawValue, stream_2);
       stream.write(JSON.stringify(data)+'\n');
     });
   });
@@ -49,19 +49,15 @@ board.on("ready", function() {
 
 // function that takes rawInput and converts it to lux
 // then streams it to plotly
-function RawToLux(raw) {
+function RawToLux(raw, stream_2) {
   var rawRange = 1024; // 3.3v
   var logRange = 5.0; // 3.3v = 10^5 lux
-
   var logLux = raw * logRange / rawRange;
-
   var data = {
     x : getDateString(),
-    y : pow(10, logLux);
+    y : Math.pow(10, logLux)
   };
   console.log(data);
-  // write the data to the plotly stream
-  RawToLux(rawValue);
   stream_2.write(JSON.stringify(data)+'\n');
 }
 
