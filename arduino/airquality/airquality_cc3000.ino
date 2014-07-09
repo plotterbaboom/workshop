@@ -7,6 +7,10 @@
 #define WLAN_PASS       "wifi_network_password"
 #define WLAN_SECURITY   WLAN_SEC_WPA2
 
+//Sensor Setup
+#define airquality_sensor_pin 0
+#define gas_sensor_pin 1
+
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
 #define nTraces 2
@@ -18,9 +22,7 @@ char *tokens[nTraces] = {"25tm9197rz", "unbi52ww8a"};
 plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
 
 
-//Sensor Setup
-#define airquality_sensor_pin 0;
-#define gas_sensor_pin 1;
+
 
 void wifi_connect(){
   /* Initialise the module */
@@ -65,14 +67,10 @@ void setup() {
   graph.openStream();
 }
 
-unsigned long x;
-int y;
-float volume;
-
 void loop() {
     int airquality_value = analogRead(airquality_sensor_pin);
     int gas_value = analogRead(gas_sensor_pin);
-    volume = (float)gas_value/1024*5.0*1000;
+    float volume = (float)gas_value/1024*5.0*1000;
     graph.plot(millis(), airquality_value, tokens[0]);
     graph.plot(millis(), volume, tokens[1]);
     delay(50);
