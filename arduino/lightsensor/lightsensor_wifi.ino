@@ -1,6 +1,8 @@
 #include <WiFi.h>
 #include "plotly_streaming_wifi.h"
 
+#define photoresistor_pin 0 //analog pin 0
+
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
 #define nTraces 1
@@ -10,8 +12,6 @@
 char *tokens[nTraces] = {"25tm9197rz"};
 // arguments: username, api key, streaming token, filename
 plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
-
-#define photoresistor_pin 0; //analog pin 0
 
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 char ssid[] = "wifi_network_name"; //  your network SSID (name)
@@ -47,9 +47,6 @@ void setup() {
   if(!success){while(true){}}
   graph.openStream();
 }
-
-unsigned long x;
-int y;
 
 void loop() {
   int sensor_reading = analogRead(photoresistor_pin);

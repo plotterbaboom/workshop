@@ -3,6 +3,8 @@
 #include <SPI.h>
 #include <plotly_streaming_cc3000.h>
 
+#define flow_sensor_pin 2
+
 #define WLAN_SSID       "wifi_network_name"
 #define WLAN_PASS       "wifi_network_password"
 #define WLAN_SECURITY   WLAN_SEC_WPA2
@@ -17,7 +19,6 @@ char *tokens[nTraces] = {"25tm9197rz"};
 // arguments: username, api key, streaming token, filename
 plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
 
-#define flow_sensor_pin 2
 // count how many pulses!
 volatile uint16_t pulses = 0;
 // track the state of the pulse pin
@@ -105,9 +106,6 @@ void setup() {
   if(!success){while(true){}}
   graph.openStream();
 }
-
-unsigned long x;
-int y;
 
 void loop() {
   Serial.print("Freq: "); Serial.println(flowrate);

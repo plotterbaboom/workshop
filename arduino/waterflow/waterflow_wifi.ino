@@ -1,6 +1,8 @@
 #include <WiFi.h>
 #include "plotly_streaming_wifi.h"
 
+#define flow_sensor_pin 2
+
 // Sign up to plotly here: https://plot.ly
 // View your API key and streamtokens here: https://plot.ly/settings
 #define nTraces 1
@@ -11,7 +13,6 @@ char *tokens[nTraces] = {"25tm9197rz"};
 // arguments: username, api key, streaming token, filename
 plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
 
-#define flow_sensor_pin 2
 // count how many pulses!
 volatile uint16_t pulses = 0;
 // track the state of the pulse pin
@@ -90,9 +91,6 @@ void setup() {
   if(!success){while(true){}}
   graph.openStream();
 }
-
-unsigned long x;
-int y;
 
 void loop() {
   Serial.print("Freq: "); Serial.println(flowrate);

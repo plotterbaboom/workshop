@@ -68,9 +68,6 @@ void setup() {
   graph.openStream();
 }
 
-unsigned long x;
-int y;
-
 void loop() {
   int rawValue = analogRead(sensorPin);
 

@@ -3,6 +3,8 @@
 #include <SPI.h>
 #include <plotly_streaming_cc3000.h>
 
+#define tmp36sensor_pin 0
+
 #define WLAN_SSID       "wifi_network_name"
 #define WLAN_PASS       "wifi_network_password"
 #define WLAN_SECURITY   WLAN_SEC_WPA2
@@ -17,7 +19,7 @@ char *tokens[nTraces] = {"25tm9197rz"};
 // arguments: username, api key, streaming token, filename
 plotly graph("workshop", "v6w5xlbx9j", tokens, "filename", nTraces);
 
-#define tmp36sensor_pin 0;
+
 
 void wifi_connect(){
   /* Initialise the module */
@@ -62,9 +64,6 @@ void setup() {
   if(!success){while(true){}}
   graph.openStream();
 }
-
-unsigned long x;
-int y;
 
 void loop() {
   //getting the voltage reading from the temperature sensor

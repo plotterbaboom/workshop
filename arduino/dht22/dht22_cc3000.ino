@@ -68,9 +68,6 @@ void setup() {
   dht.begin();
 }
 
-unsigned long x;
-int y;
-
 void loop() {
       float h = dht.readHumidity();
       float t = dht.readTemperature();
