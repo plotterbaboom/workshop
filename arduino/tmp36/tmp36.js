@@ -1,8 +1,8 @@
-var plotly = require('plotly')('workshop', 'v6w5xlbx9j');
+var plotly = require('plotly')("tracomcast", "u21hiaawnv");
 var five = require("johnny-five");
 var board = new five.Board();
 
-var data = [{x:[], y:[], stream:{token:'25tm9197rz', maxpoints:200}}];
+var data = [{x:[], y:[], stream:{token:'k5c8d45egn', maxpoints:200}}];
 var layout = {fileopt : "extend", filename : "tmp36 nodey arduino!"};
 
 board.on("ready", function() {
@@ -19,7 +19,7 @@ board.on("ready", function() {
     console.log(res);
     //once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('25tm9197rz', function (err, res) {
+    var stream = plotly.stream('k5c8d45egn', function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
